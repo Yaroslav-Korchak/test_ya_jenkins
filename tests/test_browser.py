@@ -2,19 +2,18 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
+from chromedriver_py import binary_path  # Используем chromedriver-py для получения пути к chromedriver
 
 @pytest.fixture
 def browser():
-    # Инициализация драйвера Chrome с использованием webdriver-manager
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
+    # Инициализация драйвера Chrome с использованием chromedriver-py
+    service = Service(binary_path)
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")  # Запуск в headless режиме для CI/CD
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
 
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = webdriver.Chrome(service=service, options=options)
     yield driver
     driver.quit()
 
